@@ -1,45 +1,106 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>My Medicine Tracker</h2>
+<!-- Quick Stats Cards (Bonus Feature) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 animate-fade-in">
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 flex items-center space-x-4 hover:shadow-md transition-shadow">
+        <div class="p-3 bg-emerald-100 dark:bg-emerald-950 text-emerald-600 rounded-lg text-xl">💊</div>
+        <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Tracked Medicines</p>
+            <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100">{{ medicines.count }}</h4>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 flex items-center space-x-4 hover:shadow-md transition-shadow">
+        <div class="p-3 bg-teal-100 dark:bg-teal-950 text-teal-600 rounded-lg text-xl">⏰</div>
+        <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Active Schedules</p>
+            <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100">{{ medicines.count }} Active</h4>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-gray-700 flex items-center space-x-4 hover:shadow-md transition-shadow">
+        <div class="p-3 bg-cyan-100 dark:bg-cyan-950 text-cyan-600 rounded-lg text-xl">🛡️</div>
+        <div>
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Adherence Status</p>
+            <h4 class="text-xl font-bold text-emerald-600 dark:text-emerald-400">On Track</h4>
+        </div>
+    </div>
+</div>
 
-<!-- Form to Add New Medicine -->
-<h3>Add New Medicine</h3>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Add Medicine</button>
-</form>
-
-<hr>
-
-<!-- List of Tracked Medicines -->
-<h3>Tracked Medicines</h3>
-{% if medicines %}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Medicine Name</th>
-                <th>Dosage</th>
-                <th>Frequency</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for medicine in medicines %}
-                <tr>
-                    <td>{{ medicine.name }}</td>
-                    <td>{{ medicine.dosage }}</td>
-                    <td>{{ medicine.frequency }}</td>
-                    <td>
-                        <a href="{% url 'medicine_update' medicine.pk %}">Edit</a> | 
-                        <a href="{% url 'medicine_delete' medicine.pk %}">Delete</a>
-                    </td>
-                </tr>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    
+    <!-- Left Column: Compact Form -->
+    <div class="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-gray-700 animate-fade-in">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center space-x-2">
+            <span>➕</span>
+            <span>Add New Medicine</span>
+        </h3>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            {% for field in form %}
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wider mb-1">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <p class="text-xs text-slate-400 mt-1">{{ field.help_text }}</p>
+                    {% endif %}
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <p>No medicines added yet.</p>
-{% endif %}
+            <button type="submit" class="w-full py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+                Save Medicine
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: Compact, Stylized Table -->
+    <div class="lg:col-span-2 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-gray-700 animate-fade-in">
+        <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center space-x-2">
+            <span>📋</span>
+            <span>Current Schedule</span>
+        </h3>
+
+        {% if medicines %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-200 dark:border-gray-700 text-xs text-slate-400 uppercase tracking-wider">
+                            <th class="py-3 px-2">Medicine</th>
+                            <th class="py-3 px-2">Dosage</th>
+                            <th class="py-3 px-2">Frequency</th>
+                            <th class="py-3 px-2 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-gray-700/50">
+                        {% for medicine in medicines %}
+                            <tr class="hover:bg-slate-50 dark:hover:bg-gray-700/40 transition-colors group">
+                                <td class="py-3.5 px-2 font-medium text-slate-900 dark:text-slate-100 flex items-center space-x-2">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 group-hover:scale-150 transition-transform"></span>
+                                    <span>{{ medicine.name }}</span>
+                                </td>
+                                <td class="py-3.5 px-2 text-slate-600 dark:text-slate-300">
+                                    <span class="px-2.5 py-1 bg-slate-100 dark:bg-gray-700 rounded-md text-xs font-semibold">{{ medicine.dosage }}</span>
+                                </td>
+                                <td class="py-3.5 px-2 text-slate-600 dark:text-slate-300">
+                                    <span class="px-2.5 py-1 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 rounded-md text-xs font-semibold">{{ medicine.frequency }}</span>
+                                </td>
+                                <td class="py-3.5 px-2 text-right space-x-2">
+                                    <a href="{% url 'medicine_update' medicine.pk %}" class="inline-block p-1.5 text-xs text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 rounded transition-all">Edit</a>
+                                    <a href="{% url 'medicine_delete' medicine.pk %}" class="inline-block p-1.5 text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded transition-all">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-12">
+                <div class="text-4xl mb-3">🌿</div>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Your medicine list is completely clear.</p>
+                <p class="text-xs text-slate-400 mt-1">Add your first medicine using the panel on the left.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
 {% endblock %}
