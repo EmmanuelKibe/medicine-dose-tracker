@@ -126,3 +126,8 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# Where to redirect after successful login/logout
+LOGIN_REDIRECT_URL = 'medicine_list'
+LOGOUT_REDIRECT_URL = 'login'
+LOGIN_URL = 'login'

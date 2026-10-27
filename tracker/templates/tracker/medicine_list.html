@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>My Medicine Tracker</h2>
+
+<!-- Form to Add New Medicine -->
+<h3>Add New Medicine</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Add Medicine</button>
+</form>
+
+<hr>
+
+<!-- List of Tracked Medicines -->
+<h3>Tracked Medicines</h3>
+{% if medicines %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Medicine Name</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+                <tr>
+                    <td>{{ medicine.name }}</td>
+                    <td>{{ medicine.dosage }}</td>
+                    <td>{{ medicine.frequency }}</td>
+                    <td>
+                        <a href="{% url 'medicine_update' medicine.pk %}">Edit</a> | 
+                        <a href="{% url 'medicine_delete' medicine.pk %}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No medicines added yet.</p>
+{% endif %}
+{% endblock %}
