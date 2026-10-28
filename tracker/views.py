@@ -3,20 +3,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import Medicine
-from .forms import MedicineForm
+from .forms import MedicineForm, CustomUserCreationForm
 import os
 from django.http import HttpResponse, HttpResponseForbidden
 from django.core.management import call_command
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
             return redirect('medicine_list')
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 # 1. READ & CREATE View (Account Dashboard)
