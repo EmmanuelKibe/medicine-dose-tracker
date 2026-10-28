@@ -4,6 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import Medicine
 from .forms import MedicineForm
+import os
+from django.http import HttpResponse, HttpResponseForbidden
+from django.core.management import call_command
 
 def signup(request):
     if request.method == 'POST':
@@ -54,3 +57,14 @@ def medicine_delete(request, pk):
         medicine.delete()
         return redirect('medicine_list')
     return render(request, 'tracker/medicine_confirm_delete.html', {'medicine': medicine})
+
+def trigger_reminders(request):
+    # Protect endpoint with a secret key passed in headers or query parameters
+    secret = request.GET.get('secret')
+    expected_secret = os.environ.get('CRON_SECRET', 'my-local-cron-secret')
+    
+    if secret != expected_secret:
+        return HttpResponseForbidden("Unauthorized")
+        
+    call_command('send_reminders')
+    return HttpResponse("Reminders processed successfully.")
