@@ -141,3 +141,12 @@ LOGIN_URL = 'login'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Email Configuration (SMTP using Gmail or SendGrid/Resend)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('emmanuelkibe148@gmail.com')      # Your email address
+EMAIL_HOST_PASSWORD = os.environ.get('altojrbqiuhhvkro')  # App-specific password
+

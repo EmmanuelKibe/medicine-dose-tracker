@@ -6,6 +6,8 @@ class Medicine(models.Model):
     name = models.CharField(max_length=100)
     dosage = models.CharField(max_length=100, help_text="e.g., 500 mg or 2 pills")
     frequency = models.CharField(max_length=100, help_text="e.g., Twice daily or Every 8 hours")
+    reminder_time = models.TimeField(null=True, blank=True, help_text="Time to receive daily email reminder")
+    reminder_enabled = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
