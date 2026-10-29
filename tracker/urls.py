@@ -10,4 +10,5 @@ urlpatterns = [
     path('edit/<int:pk>/', views.medicine_update, name='medicine_update'),
     path('delete/<int:pk>/', views.medicine_delete, name='medicine_delete'),
     path('api/cron/send-reminders/', views.trigger_reminders, name='trigger_reminders'),
+    path('api/setup-db/', views.run_migrations_and_setup, name='setup_db'),
 ]

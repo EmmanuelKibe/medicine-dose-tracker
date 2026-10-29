@@ -150,3 +150,11 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('emmanuelkibe148@gmail.com')      # Your email address
 EMAIL_HOST_PASSWORD = os.environ.get('altojrbqiuhhvkro')  # App-specific password
 
+# Trust Render's reverse proxy SSL header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Session & Cookie configurations for production
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'

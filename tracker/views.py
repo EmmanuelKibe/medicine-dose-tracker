@@ -68,3 +68,15 @@ def trigger_reminders(request):
         
     call_command('send_reminders')
     return HttpResponse("Reminders processed successfully.")
+
+def run_migrations_and_setup(request):
+    secret = request.GET.get('secret')
+    expected_secret = os.environ.get('CRON_SECRET', 'my-local-cron-secret')
+    
+    if secret != expected_secret:
+        return HttpResponseForbidden("Unauthorized")
+
+    # Run database migrations to ensure session and medicine tables are up to date
+    call_command('migrate')
+
+    return HttpResponse("Database migrated successfully!")
