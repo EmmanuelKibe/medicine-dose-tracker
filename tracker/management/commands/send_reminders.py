@@ -36,7 +36,7 @@ class Command(BaseCommand):
                     message,
                     settings.EMAIL_HOST_USER,
                     [medicine.user.email],
-                    fail_silently=True,
+                    fail_silently=False,
                 )
                 count += 1
 
