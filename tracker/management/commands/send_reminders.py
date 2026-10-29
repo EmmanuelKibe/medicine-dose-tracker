@@ -1,43 +1,30 @@
-from datetime import datetime
-from django.core.management.base import BaseCommand
-from django.core.mail import send_mail
-from django.conf import settings
+from django.utils import timezone
 from tracker.models import Medicine
 
 class Command(BaseCommand):
-    help = 'Checks for active medicine schedules matching current hour and sends email reminders.'
+    help = 'Sends email reminders'
 
     def handle(self, *args, **options):
-        current_time = datetime.now().time()
-        current_hour = current_time.hour
-        current_minute = current_time.minute
-
-        # Find medicines matching the current hour and minute
+        # Get local time based on TIME_ZONE setting in settings.py
+        now = timezone.localtime()
+        
+        # Query active reminders for the current hour and minute
         medicines = Medicine.objects.filter(
             reminder_enabled=True,
-            reminder_time__hour=current_hour,
-            reminder_time__minute=current_minute
+            reminder_time__hour=now.hour,
+            reminder_time__minute=now.minute
         ).select_related('user')
 
         count = 0
         for medicine in medicines:
             if medicine.user.email:
-                subject = f"💊 Reminder: Time to take your {medicine.name}"
-                message = (
-                    f"Hello {medicine.user.username},\n\n"
-                    f"This is your scheduled reminder to take:\n"
-                    f"• Medicine: {medicine.name}\n"
-                    f"• Dosage: {medicine.dosage}\n"
-                    f"• Frequency: {medicine.frequency}\n\n"
-                    f"Stay healthy,\nMedTrack Team"
-                )
                 send_mail(
-                    subject,
-                    message,
-                    settings.EMAIL_HOST_USER,
-                    [medicine.user.email],
-                    fail_silently=False,
+                    subject=f"💊 Reminder: Time to take {medicine.name}",
+                    message=f"Hello {medicine.user.username},\n\nIt's time to take your {medicine.name} ({medicine.dosage}).",
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[medicine.user.email],
+                    fail_silently=False  # Raises error if SMTP fails
                 )
                 count += 1
 
-        self.stdout.write(self.style.SUCCESS(f'Successfully sent {count} medicine reminder(s).'))
+        self.stdout.write(f"Processed {count} reminder(s) at {now.strftime('%H:%M:%S')}")
