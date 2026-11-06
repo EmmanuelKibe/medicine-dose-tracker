@@ -83,7 +83,7 @@ def run_migrations_and_setup(request):
     # 2. Get or create your user account with explicit password hash
     user, created = User.objects.get_or_create(username='Manu')
     user.set_password('MedTrack2026!')  # Set explicit strong password
-    user.email = 'your_actual_email@gmail.com' # Replace with your real email
+    user.email = 'emmanuelkibe148@gmail.com' # Replace with your real email
     user.is_active = True
     user.save()
 
