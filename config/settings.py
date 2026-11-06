@@ -153,6 +153,11 @@ EMAIL_HOST_PASSWORD = os.environ.get('altojrbqiuhhvkro')  # App-specific passwor
 # Trust Render's reverse proxy SSL header
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+# Trust Render domain for CSRF form submissions
+CSRF_TRUSTED_ORIGINS = [
+    'https://medtrack-app-ca93.onrender.com',
+]
+
 # Session & Cookie configurations for production
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True

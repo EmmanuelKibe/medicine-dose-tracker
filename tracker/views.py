@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 from django.contrib.auth import login
 from .models import Medicine
 from .forms import MedicineForm, CustomUserCreationForm
@@ -76,7 +77,18 @@ def run_migrations_and_setup(request):
     if secret != expected_secret:
         return HttpResponseForbidden("Unauthorized")
 
-    # Run database migrations to ensure session and medicine tables are up to date
+    # 1. Run database migrations
     call_command('migrate')
 
-    return HttpResponse("Database migrated successfully!")
+    # 2. Get or create your user account with explicit password hash
+    user, created = User.objects.get_or_create(username='Manu')
+    user.set_password('MedTrack2026!')  # Set explicit strong password
+    user.email = 'your_actual_email@gmail.com' # Replace with your real email
+    user.is_active = True
+    user.save()
+
+    # 3. Log the user in directly for this session
+    login(request, user)
+
+    action = "Created new user" if created else "Updated existing user password"
+    return HttpResponse(f"Success! {action} 'Manu'. You are now logged in! Refresh your app home page.")
